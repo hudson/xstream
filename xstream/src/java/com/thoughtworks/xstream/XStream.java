@@ -633,9 +633,8 @@ public class XStream {
     }
 
     protected void setupConverters() {
-        final ReflectionConverter reflectionConverter = new ReflectionConverter(
-            mapper, reflectionProvider);
-        registerConverter(reflectionConverter, PRIORITY_VERY_LOW);
+        final Converter defaultConverter = createDefaultConverter();
+        registerConverter(defaultConverter, PRIORITY_VERY_LOW);
 
         registerConverter(
             new SerializableConverter(mapper, reflectionProvider, classLoaderReference), PRIORITY_LOW);
@@ -700,7 +699,7 @@ public class XStream {
             registerConverterDynamically(
                 "com.thoughtworks.xstream.converters.extended.ThrowableConverter",
                 PRIORITY_NORMAL, new Class[]{Converter.class},
-                new Object[]{reflectionConverter});
+                new Object[]{defaultConverter});
             registerConverterDynamically(
                 "com.thoughtworks.xstream.converters.extended.StackTraceElementConverter",
                 PRIORITY_NORMAL, null, null);
@@ -710,7 +709,7 @@ public class XStream {
             registerConverterDynamically(
                 "com.thoughtworks.xstream.converters.extended.RegexPatternConverter",
                 PRIORITY_NORMAL, new Class[]{Converter.class},
-                new Object[]{reflectionConverter});
+                new Object[]{defaultConverter});
             registerConverterDynamically(
                 "com.thoughtworks.xstream.converters.extended.CharsetConverter",
                 PRIORITY_NORMAL, null, null);
@@ -741,7 +740,7 @@ public class XStream {
         }
 
         registerConverter(
-            new SelfStreamingInstanceChecker(reflectionConverter, this), PRIORITY_NORMAL);
+            new SelfStreamingInstanceChecker(defaultConverter, this), PRIORITY_NORMAL);
     }
 
     private void registerConverterDynamically(String className, int priority,
@@ -1321,6 +1320,14 @@ public class XStream {
         return mapper;
     }
 
+    public JVM getJvm() {
+        return jvm;
+    }
+
+    public ConverterRegistry getConverterRegistry() {
+        return converterRegistry;
+    }
+
     /**
      * Retrieve the {@link ReflectionProvider} in use.
      * 
@@ -1797,6 +1804,10 @@ public class XStream {
         if (annotationConfiguration != null) {
             annotationConfiguration.autodetectAnnotations(mode);
         }
+    }
+
+    protected Converter createDefaultConverter() {
+        return new ReflectionConverter(mapper, reflectionProvider);
     }
 
     /**
