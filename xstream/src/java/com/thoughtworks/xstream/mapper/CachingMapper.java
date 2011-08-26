@@ -12,8 +12,7 @@
 package com.thoughtworks.xstream.mapper;
 
 import java.lang.ref.WeakReference;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
 import com.thoughtworks.xstream.core.Caching;
@@ -36,15 +35,22 @@ public class CachingMapper extends MapperWrapper implements Caching {
     public Class realClass(String elementName) {
         WeakReference reference = (WeakReference) realClassCache.get(elementName);
         if (reference != null) {
-            Class cached = (Class) reference.get();
+            Object cached = reference.get();
+            if (cached instanceof CannotResolveClassException)
+                throw (CannotResolveClassException) cached;
             if (cached != null) {
-                return cached;
+                return (Class)cached;
             }
         }
-        
-        Class result = super.realClass(elementName);
-        realClassCache.put(elementName, new WeakReference(result));
-        return result;
+
+        try {
+            Class result = super.realClass(elementName);
+            realClassCache.put(elementName, new WeakReference(result));
+            return result;
+        } catch (CannotResolveClassException e) {
+            realClassCache.put(elementName,new WeakReference(e));
+            throw e;
+        }
     }
 
     public void flushCache() {
@@ -52,7 +58,7 @@ public class CachingMapper extends MapperWrapper implements Caching {
     }
 
     private Object readResolve() {
-        realClassCache = Collections.synchronizedMap(new HashMap(128));
+        realClassCache = new ConcurrentHashMap();
         return this;
     }
 }

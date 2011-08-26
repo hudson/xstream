@@ -11,15 +11,18 @@
  */
 package com.thoughtworks.xstream.core;
 
+import java.io.ByteArrayInputStream;
 import java.util.BitSet;
 
 import junit.framework.TestCase;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverterWrapper;
 import com.thoughtworks.xstream.converters.basic.StringConverter;
 import com.thoughtworks.xstream.converters.collections.BitSetConverter;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 
 /**
  * @author Guilherme Silveira
@@ -27,7 +30,7 @@ import com.thoughtworks.xstream.converters.collections.BitSetConverter;
 public class DefaultConverterLookupTest extends TestCase {
 
 	public void testCanReplaceWithHigherPriority() {
-		
+
 		// this test actually depends on the keyset implementation of the corresponding cache map.
 		final DefaultConverterLookup lookup = new DefaultConverterLookup();
 		Converter currentConverter = new SingleValueConverterWrapper(new StringConverter());
@@ -40,5 +43,26 @@ public class DefaultConverterLookupTest extends TestCase {
 		lookup.registerConverter(newConverter, 100);
 		assertEquals(lookup.lookupConverterForType(String.class), newConverter);
 	}
+
+    /**
+     * Caching the failure should function correctly.
+     */
+    public void testFailureCache() {
+        String xml = "<root><field class='NoSuchClass'/></root>";
+        XStream xs = new XStream();
+        xs.alias("root", Root.class);
+        for (int i = 0; i < 3; i++) {
+            try {
+                xs.fromXML(new ByteArrayInputStream(xml.getBytes()));
+                fail(); // should fail to unmarshal
+            } catch (ConversionException e) {
+                assertTrue(e.getCause() instanceof CannotResolveClassException);
+            }
+        }
+    }
+
+    public static class Root {
+        public Object field;
+    }
 
 }

@@ -14,6 +14,7 @@ package com.thoughtworks.xstream.converters.reflection;
 import sun.misc.Unsafe;
 import sun.reflect.ReflectionFactory;
 
+import com.thoughtworks.xstream.core.util.ConcurrentWeakHashMap;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -59,7 +60,7 @@ public class Sun14ReflectionProvider extends PureJavaReflectionProvider {
     }
 
     private transient ReflectionFactory reflectionFactory = ReflectionFactory.getReflectionFactory();
-    private transient Map constructorCache =new HashMap();
+    private transient Map constructorCache = new ConcurrentWeakHashMap();
 
     public Sun14ReflectionProvider() {
     	super();

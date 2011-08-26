@@ -11,11 +11,8 @@
  */
 package com.thoughtworks.xstream.converters.basic;
 
-import java.util.Collections;
+import com.thoughtworks.xstream.core.util.ConcurrentWeakHashMap;
 import java.util.Map;
-
-import com.thoughtworks.xstream.core.util.WeakCache;
-
 
 /**
  * Converts a String to a String ;).
@@ -51,7 +48,7 @@ public class StringConverter extends AbstractSingleValueConverter {
      * Construct a StringConverter using a cache with weak references.
      */
     public StringConverter() {
-        this(Collections.synchronizedMap(new WeakCache()));
+        this(new ConcurrentWeakHashMap());
     }
 
     public boolean canConvert(final Class type) {

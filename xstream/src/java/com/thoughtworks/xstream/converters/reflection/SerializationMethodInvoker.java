@@ -14,15 +14,13 @@ package com.thoughtworks.xstream.converters.reflection;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.core.Caching;
 import com.thoughtworks.xstream.core.util.FastField;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -45,7 +43,7 @@ public class SerializationMethodInvoker implements Caching {
         new FastField(Object.class, "readObject"), 
         new FastField(Object.class, "writeObject")
     };
-    private Map cache = Collections.synchronizedMap(new HashMap());
+    private Map cache = new ConcurrentHashMap();
     {
         for(int i = 0; i < OBJECT_TYPE_FIELDS.length; ++i) {
             cache.put(OBJECT_TYPE_FIELDS[i], NO_METHOD);
