@@ -127,8 +127,8 @@ public class SerializableConverter extends AbstractReflectionConverter {
                     ObjectStreamField field = objectStreamClass.getField(name);
                     Object value = fields.get(name);
                     if (field == null) {
-                        throw new ObjectAccessException("Class " + value.getClass().getName()
-                                + " may not write a field named '" + name + "'");
+                        throw new NonExistentFieldException("Class " + value.getClass().getName()
+                                + " may not write a field named '" + name + "'", name);
                     }
                     if (value != null) {
                         ExtendedHierarchicalStreamWriterHelper.startNode(writer, mapper.serializedMember(source.getClass(), name), field.getType());
