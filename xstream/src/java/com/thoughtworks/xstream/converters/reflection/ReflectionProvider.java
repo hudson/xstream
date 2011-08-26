@@ -36,6 +36,12 @@ public interface ReflectionProvider {
 
     boolean fieldDefinedInClass(String fieldName, Class type);
 
+     /**
+     * Works like {@link #getField(Class, String)} but returns null
+     * instead of throwing {@link ObjectAccessException}.
+     */
+    Field getFieldOrNull(Class definedIn, String fieldName);
+
     /**
      * A visitor interface for serializable fields defined in a class.
      *
