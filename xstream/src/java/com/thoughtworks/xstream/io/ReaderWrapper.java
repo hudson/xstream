@@ -76,6 +76,10 @@ public abstract class ReaderWrapper implements HierarchicalStreamReader {
         wrapped.close();
     }
 
+    public String peekNextChild() {
+        return wrapped.peekNextChild();
+    }
+
     public HierarchicalStreamReader underlyingReader() {
         return wrapped.underlyingReader();
     }

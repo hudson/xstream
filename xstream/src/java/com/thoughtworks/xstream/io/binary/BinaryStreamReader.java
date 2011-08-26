@@ -186,6 +186,21 @@ public class BinaryStreamReader implements HierarchicalStreamReader {
         }
     }
 
+    public String peekNextChild() {
+        Token nextToken = readToken();
+        switch (nextToken.getType()) {
+            case Token.TYPE_VALUE:
+            case Token.TYPE_END_NODE:
+                pushBack(nextToken);
+                return null;
+            case Token.TYPE_START_NODE:
+                pushBack(nextToken);
+                return idRegistry.get(nextToken.getId());
+            default:
+                throw new StreamException("Unexpected token " + nextToken);
+        }
+    }
+
     public HierarchicalStreamReader underlyingReader() {
         return this;
     }

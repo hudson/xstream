@@ -84,6 +84,12 @@ public interface HierarchicalStreamReader extends ErrorReporter {
     void close();
 
     /**
+     * In situation where {@link #hasMoreChildren()} returns true, peek the tag name
+     * of the child.
+     */
+    String peekNextChild();
+
+    /**
      * Return the underlying HierarchicalStreamReader implementation.
      *
      * <p>If a Converter needs to access methods of a specific HierarchicalStreamReader implementation that are not
