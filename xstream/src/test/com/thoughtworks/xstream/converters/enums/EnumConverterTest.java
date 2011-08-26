@@ -47,6 +47,12 @@ public class EnumConverterTest extends TestCase {
         assertEquals(in, xstream.fromXML(expectedXml));
     }
 
+    public void testRelaxedNameMatch() {
+        String expectedXml = "<simple>green</simple>";
+        SimpleEnum in = SimpleEnum.GREEN;
+        assertEquals(in, xstream.fromXML(expectedXml));
+    }
+
     public void testDeserializedEnumIsTheSameNotJustEqual() {
         assertSame(SimpleEnum.GREEN, xstream.fromXML(xstream.toXML(SimpleEnum.GREEN)));
         assertSame(PolymorphicEnum.B, xstream.fromXML(xstream.toXML(PolymorphicEnum.B)));
