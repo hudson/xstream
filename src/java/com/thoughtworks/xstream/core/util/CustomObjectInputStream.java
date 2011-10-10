@@ -38,6 +38,10 @@ public class CustomObjectInputStream extends ObjectInputStream {
         void close() throws IOException;
     }
 
+    public static synchronized CustomObjectInputStream getInstance(DataHolder whereFrom, CustomObjectInputStream.StreamCallback callback) {
+        return getInstance(whereFrom, callback, null);
+    }
+
     public static synchronized CustomObjectInputStream getInstance(DataHolder whereFrom, CustomObjectInputStream.StreamCallback callback, ClassLoader classLoaderReference) {
         try {
             CustomObjectInputStream result = (CustomObjectInputStream) whereFrom.get(DATA_HOLDER_KEY);
